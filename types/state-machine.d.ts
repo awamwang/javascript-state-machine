@@ -34,15 +34,26 @@ declare namespace StateMachine {
 	type StateMachineTransitions = () => string[];
 	type StateMachineStates = () => string[];
 	type Callback = (...args: any[]) => any;
-	interface Observe {
-		(event: string, callback: Callback): void;
-		[name: string]: Callback;
-	}
 
 	interface LifeCycle {
 		transition: string;
 		from: string;
 		to: string;
+	}
+
+	interface Methods {
+		[method: string]: Callback | undefined;
+		onBeforeTransition?(lifecycle: LifeCycle, ...args: any[]): boolean | Promise<boolean>;	// 1
+		onLeaveState?(lifecycle: LifeCycle, ...args: any[]): boolean | Promise<boolean>;	// 2
+		onTransition?(lifecycle: LifeCycle, ...args: any[]): boolean | Promise<boolean>;	// 3
+		onEnterState?(lifecycle: LifeCycle, ...args: any[]): any | Promise<any>;	// 4
+		onAfterTransition?(lifecycle: LifeCycle, ...args: any[]): any | Promise<any>;	// 5
+		onPendingTransition?(transition: string, from: string, to: string): any | Promise<any>;
+	}
+	interface Observe {
+		(event: string, callback: Callback): void;
+		(methodOptions: Methods): void;
+		[name: string]: Callback;
 	}
 
 	interface Options {
@@ -57,15 +68,7 @@ declare namespace StateMachine {
 			from: string | string[] | '*';
 			to: string | ((...args: any[]) => string);
 		}[];
-		methods: {
-			[method: string]: Callback | undefined;
-			onBeforeTransition?(lifecycle: LifeCycle, ...args: any[]): boolean | Promise<boolean>;	// 1
-			onLeaveState?(lifecycle: LifeCycle, ...args: any[]): boolean | Promise<boolean>;	// 2
-			onTransition?(lifecycle: LifeCycle, ...args: any[]): boolean | Promise<boolean>;	// 3
-			onEnterState?(lifecycle: LifeCycle, ...args: any[]): any | Promise<any>;	// 4
-			onAfterTransition?(lifecycle: LifeCycle, ...args: any[]): any | Promise<any>;	// 5
-			onPendingTransition?(transition: string, from: string, to: string): any | Promise<any>;
-		};
+		methods: Methods;
 		data: any;	// {} | any[] | ((...args: any[]) => {} | any[]);
 		plugins: any[];
 	}
