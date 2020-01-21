@@ -24,9 +24,11 @@
   ],
   "license": "MIT",
   "main": "lib/state-machine.js",
+  "types": "types/state-machine.d.ts",
   "files": [
     "lib/**/*.js",
-    "dist/**/*.js"
+    "dist/**/*.js",
+    "types/state-machine.d.ts"
   ],
   "directories": {},
   "devDependencies": {
